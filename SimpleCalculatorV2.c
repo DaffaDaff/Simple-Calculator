@@ -19,6 +19,21 @@ const char * removeStrElement(char nStr[], int *len, int index)
     return nStr;
 }
 
+// Insert String Element
+// Insert element in an index of a string
+const char * insertStrElement(char nStr[], int *len, int index, char value)
+{
+    for(int i = *len; i >= index; i--)
+    {
+        if(i == index) str[i] = value;
+        else nStr[i] = nStr[i - 1];
+    }
+    
+    *len += 1;
+    
+    return nStr;
+}
+
 // Remove Spaces
 // Remove Spaces from a string
 const char * removeSpaces(char nStr[], int len)
@@ -26,7 +41,10 @@ const char * removeSpaces(char nStr[], int len)
     for(int i = 0; i < len; i++)
     {
         if (nStr[i] == ' ')
-            removeStrElement(nStr, &len, i);
+        {
+            removeStrElement(nStr, &len, i); 
+            lenght = len;
+        }
     }
     
     return nStr;
