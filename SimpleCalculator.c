@@ -219,12 +219,12 @@ int validate(char str[], int len)
 //
 // Calculate multiplication and division from a string
 // 
-int MultDivCalculation(char str[], int len, int startIndex)
+int MultDivCalculation(char str[], int len)
 {
     int result = 1;
     
-    // Start Mult/Div sequence from startIndex of str
-    for(int i = startIndex; i < len; i++)
+    // Start calculating Mult/Div sequence
+    for(int i = 0; i <= len; i++)
     {
         if(str[i] >= 48 && str[i] <= 57)
         {
@@ -239,20 +239,14 @@ int MultDivCalculation(char str[], int len, int startIndex)
             int n = intFromString(str, index, digit);
             
             
-            if(index == startIndex) result = n;
-            else if(str[index - 2] == '*'){
-                result *= n;}
+            
+            if(index <= 1) result = n;
+            else if(str[index - 2] == '*')
+                result *= n;
             else if(str[index - 2] == '/')
                 result /= n;
         }
-        
-        // Check for addition & subtraction symbol
-        // If found then the sequence ends
-        if( str[i] == '+' || str[i] == '-')
-            break;
     }
-    
-    
     
     return result;
 }
@@ -278,20 +272,37 @@ int calculation(char str[], int len)
             int n;
             int index = i; // define index where the number start
             
-            if(str[i + 2] == '*' || str[i + 2] == '/')\
+            // Find how many digit in the number
+            int digit;
+            digit = findDigit(str, index);
+            
+            // Multiplication & Division Check
+            if(str[i + digit + 1] == '*' || str[i + digit + 1] == '/')
             {
-                for(int j = i; j < len; j++, i++)
+                // string of Mult/Div sequence
+                char nStr[len];
+                clearString(nStr, len);
+                
+                int length;
+                
+                // Write sequence from main string
+                for(int j = 0; i < len; j++, i++)
                 {
+                    // Stop when there is addition/subtraction
                     if( str[i] == '+' || str[i] == '-')
+                    {
                         break;
+                    }
+                    
+                    nStr[j] = str[i]; // Write every char into string sequnce
+                    length = j;
                 }
                 
-                n = MultDivCalculation(str, len, index);
+                // Start Calculation
+                n = MultDivCalculation(nStr, length);
             }
+            // Addition & Subtraction
             else {
-                int digit;
-                digit = findDigit(str, index);
-                
                 i += digit;
                 
                 n = intFromString(str, index, digit);
@@ -335,4 +346,3 @@ int main()
     
     return 0;
 }
-
