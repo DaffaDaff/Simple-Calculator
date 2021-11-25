@@ -553,18 +553,25 @@ int Calculation(char str[], int len)
     return sum;
 }
 
-int main()
+int start()
 {
     char str[500];
     int len;
     
+    printf("Enter Operation:\n");
     scanf("%[^\n]s", str);
     
     len = getLength(str);
     
-    if( !Validate(str, len) ) return -1;
+    if( !Validate(str, len) ) return 0;
     
+    printf("\nResult:\n");
     printf("%d", Calculation(str, len));
+}
+
+int main()
+{
+    start();
     
     return 0;
 }
