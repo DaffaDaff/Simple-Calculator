@@ -1,5 +1,17 @@
 #include <stdio.h>
 
+
+//Print Array
+void printArray(int arr[], int len)
+{
+    printf("{");
+    for(int i = 0; i < len; i++)
+    {
+        printf(" %d ", arr[i]);
+    }
+    printf("}");
+}
+
 // Get Length
 // Function to get length of a string
 // from start to end of char
@@ -14,11 +26,68 @@ int getLength(char str[])
     }
 }
 
-// Char to int
+// Power
+int pwr(int n, int p)
+{
+    int result = 1;
+    
+    for(int i = 0; i < p; i++)
+    {
+        result *= n;
+    }
+    
+    return result;
+}
+
+// Char to Integer
 // convert integer char ('0', '1', ..., '8', '9') to integer (0, 1, ..., 8, 9)
 int char2int(char c)
 {
-    return c - 48;
+    if((int)c >= 48 && (int)c <= 57)
+        return c - 48;
+}
+
+// String to Integer
+// convert integer string ("1", "23", "456", etc) to integer (1, 23, 456, etc)
+int str2int(char str[])
+{
+    int len = getLength(str);
+    
+    int result = 0;
+    for(int i = 0, j = 0; i <= len; i++)
+    {
+        if(str[len - i] >= 48 && str[len - i] <= 57){
+            
+            result += char2int(str[len - i]) * pwr(10, j);
+            j++;
+        }
+        else
+            continue;
+    }
+    
+    return result;
+}
+
+// Clear String
+// assign all char to 0
+const char * clearString(char str[], int len)
+{
+    for(int i = 0; i < len; i++)
+    {
+        str[i] = 0;
+    }
+    
+    return str;
+}
+
+// Clear Array
+// assign all value to 0
+const int * clearArray(int arr[], int len)
+{
+    for(int i = 0; i < len; i++)
+    {
+        arr[i] = 0;
+    }
 }
 
 //Validation
@@ -102,35 +171,75 @@ int validate(char str[], int len)
 }
 
 // Calculation
+//
+// How it works:
+// 1. every number in string will be converted into integer
+// 2. number will be stored in sum array
+// 3. all value in array will be summed
 int calculation(char str[], int len)
 {
-    int array2sum[len];
+    int sumArray[len];
+    clearArray(sumArray, len); // Clear array value to zero
     
     int arrIndex = 0;
+    
     for(int i = 0; i < len; i++)
     {
         if(str[i] >= 48 && str[i] <= 57)
         {
-            int n = char2int(str[i]);
+            int index = i; // define index where the number start
             
-            if(str[i - 2] == '-')
+            // Find how many digit in the number
+            int digit;
+            for (int j = 0, k = i; j <= len; j++, k++)
+            {
+                if(!(str[k] >= 48 && str[k] <= 57))
+                {
+                    digit = j;
+                    break;
+                }
+            }
+            
+            // string for number
+            // adding digits in number into string and convert string into integer
+            char nStr[digit];
+            clearString(nStr, digit);
+            
+            // Write every integer char into string until space
+            for (int j = 0; j <= digit; j++, i++)
+            {
+                if(str[i] >= 48 && str[i] <= 57)
+                {
+                    nStr[j] = str[i];
+                }
+                else 
+                {
+                    nStr[j] = 0;
+                }
+            }
+            
+            int n = str2int(nStr); // Convert integer string to integer
+            
+            // negate value if '-' is present before number
+            if(str[index - 2] == '-')
             {
                 n *= -1;
             }
             
-            array2sum[arrIndex] = n;
-            
+            // add number into previous sum
+            sumArray[arrIndex] += n;
             arrIndex++;
         }
     }
     
-    int sum;
+    // Sum every value in the sumArray
+    int sum = 0;
+    
     for(int i = 0; i < len; i++)
     {
-        sum += array2sum[i];
+        sum += sumArray[i];
     }
     
-    printf("%d", sum);
     return sum;
 }
 
@@ -145,8 +254,7 @@ int main()
     
     if( !validate(str, len) ) return -1;
     
-    calculation(str, len);
+    printf("%d", calculation(str, len));
     
     return 0;
 }
-
