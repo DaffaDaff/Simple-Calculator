@@ -26,6 +26,21 @@ int getLength(char str[])
     }
 }
 
+// Parenthesis Length
+// get parenthesis length from a string sequence
+int getPrntsLength(char str[], int startIndex, int len)
+{
+    int lenght = 0;
+    
+    for(int i = startIndex + 1; i < len; i++)
+    {
+        if(str[i] == ')') break;
+        lenght++;
+    }
+    
+    return lenght;
+}
+
 // Power
 // Basic Power Calculation
 int pwr(int n, int p)
@@ -142,6 +157,7 @@ int Validate(char str[], int len)
 {
     int isSpace = 0; // 0 is non space, 1 is space
     int state = 0; // state 0 is number, state 1 is operator
+    int parenthesisCount; // counter for parenthesis, +1 if '(' and -1 if ')'. by the end of validation, this value should be 0
     
     for(int i = 0; i < len; i++)
     {
@@ -165,10 +181,19 @@ int Validate(char str[], int len)
             
             if(state == 0)
             {
+                // Parenthesis check
+                if (str[i] == '(')
+                {
+                    parenthesisCount++;
+                    continue;
+                }
+                
                 state = 1;
                 
+                //Number check
                 if(str[i] >= 48 && str[i] <= 57)
                 {
+                    // check if there is still number after this (more digit)
                     if(str[i + 1] >= 48 && str[i] <= 57)
                     {
                         state = 0;
@@ -190,8 +215,16 @@ int Validate(char str[], int len)
             }
             else if (state == 1)
             {
+                // Parenthesis check
+                if(str[i] == ')')
+                {
+                    parenthesisCount--;
+                    continue;
+                }
+                
                 state = 0;
                 
+                // Operator check
                 switch (str[i])
                 {
                     case ' ':
@@ -218,6 +251,8 @@ int Validate(char str[], int len)
     return 1;
 }
 
+int Calculation(char str[], int len);
+
 // Power Calculation
 //
 // Calculate power from a string sequence
@@ -234,17 +269,45 @@ int PowCalculation(char str[], int len)
     
     for(int i = 0; i <= len; i++)
     {
+        int n;
+        
+        int index = i;
+        
+        if(str[i] == '(')
+        {
+            // Parenthesis sequence length
+            int length;
+            
+            length = getPrntsLength(str, i, len);
+            
+            char prntStr[length];
+            clearString(prntStr, length);
+            
+            // Write sequence inside parenthesis into string (exclude parenthesis symbol)
+            i++;
+            for(int j = 0; j < length; j++, i++)
+            {
+                prntStr[j] = str[i];
+            }
+            i++;
+            
+            // Calculate string sequence in parenthesis
+            n = Calculation(prntStr, length);
+            
+            // Store integer number n to array
+            arr[arrIndex] = n;
+            arrIndex++;
+        }
+        
         if(str[i] >= 48 && str[i] <= 57)
         {
-            int index = i;
-            
             // Convert the string number into integer
             int digit;
             digit = findDigit(str, index);
             
             i += digit;
             
-            int n = intFromString(str, index, digit);
+            n = intFromString(str, index, digit);
             
             // Store integer number n to array
             arr[arrIndex] = n;
@@ -273,26 +336,51 @@ int MultDivCalculation(char str[], int len)
     // Start calculating Mult/Div sequence
     for(int i = 0; i <= len; i++)
     {
+        int n = 0;
+        
+        int index = i;
+        
+        // Check for parenthesis opening
+        if(str[i] == '(')
+        {
+            // Parenthesis sequence length
+            int length;
+            
+            length = getPrntsLength(str, i, len);
+            
+            char prntStr[length];
+            clearString(prntStr, length);
+            
+            // Write sequence inside parenthesis into string (exclude parenthesis symbol)
+            i++;
+            for(int j = 0; j < length; j++, i++)
+            {
+                prntStr[j] = str[i];
+            }
+            i++;
+            
+            // Calculate string sequence in parenthesis
+            n = Calculation(prntStr, length);
+        }
+        
         if(str[i] >= 48 && str[i] <= 57)
         {
-            int index = i;
-            
             // Convert the string number into integer
             int digit;
             digit = findDigit(str, index);
             
             i += digit;
             
-            int n = intFromString(str, index, digit);
+            n = intFromString(str, index, digit);
             
-            
-            
-            if(index <= 1) result = n;
-            else if(str[index - 2] == '*')
-                result *= n;
-            else if(str[index - 2] == '/')
-                result /= n;
+
         }
+        
+        if(index <= 1) result = n;
+        else if(str[index - 2] == '*')
+            result *= n;
+        else if(str[index - 2] == '/')
+            result /= n;
     }
     
     return result;
@@ -301,10 +389,13 @@ int MultDivCalculation(char str[], int len)
 // Calculation
 //
 // How it works:
-// 1. check if operator after number is multiplication or division, if yes then mult/div sequences will calculated first in another function
-// 2. every number in string will be converted into integer
-// 3. number will be stored in sum array
-// 4. all value in array will be summed
+// 1. check every char from the start of the string
+// 2. check if there is parenthesis, if yes then parenthesis sequences will be calculated first
+// 3. check if operator after number is Power, if yes then pow sequences will be calculated first in another function
+// 4. check if operator after number is multiplication or division, if yes then mult/div sequences will be calculated first in another function
+// 5. every number in string will be converted into integer
+// 6. number will be stored in sum array
+// 7. all value in array will be summed
 int Calculation(char str[], int len)
 {
     int sumArray[len];
@@ -314,11 +405,35 @@ int Calculation(char str[], int len)
     
     for(int i = 0; i < len; i++)
     {
+        int n = 0;
+        
+        int index = i; // define index where the number start
+        
+        // Check for parenthesis opening ('(')
+        if(str[i] == '(')
+        {
+            // Parenthesis sequence length
+            int length;
+            
+            length = getPrntsLength(str, i, len);
+            
+            char prntStr[length];
+            clearString(prntStr, length);
+            
+            // Write sequence inside parenthesis into string (exclude parenthesis symbol)
+            i++;
+            for(int j = 0; j < length; j++, i++)
+            {
+                prntStr[j] = str[i];
+            }
+            i++;
+            
+            // Calculate string sequence in parenthesis
+            n = Calculation(prntStr, length);
+        }
+        
         if(str[i] >= 48 && str[i] <= 57)
         {
-            int n;
-            int index = i; // define index where the number start
-            
             // Find how many digit in the number
             int digit;
             digit = findDigit(str, index);
@@ -335,6 +450,16 @@ int Calculation(char str[], int len)
                 // Write sequence from main string
                 for(int j = 0; i < len; j++, i++)
                 {
+                    // Check for parenthesis opening ('(')
+                    if(str[i] == '(')
+                    {
+                        for(int k = i; k < len; k++, j++, i++)
+                        {
+                            nStr[j] = str[i];
+                            if(str[i] == ')') break;
+                        }
+                    }
+                    
                     // Stop when there is addition/subtraction
                     if( str[i] == '+' || str[i] == '-')
                     {
@@ -365,6 +490,16 @@ int Calculation(char str[], int len)
                 // Write sequence from main string
                 for(int j = 0; i < len; j++, i++)
                 {
+                    // Check for parenthesis opening ('(')
+                    if(str[i] == '(')
+                    {
+                        for(int k = i; k < len; k++, j++, i++)
+                        {
+                            nStr[j] = str[i];
+                            if(str[i] == ')') break;
+                        }
+                    }
+                    
                     // Stop when there is addition/subtraction
                     if( str[i] == '+' || str[i] == '-')
                     {
@@ -385,16 +520,16 @@ int Calculation(char str[], int len)
                 n = intFromString(str, index, digit);
             }
             
-            // negate value if '-' is present before number
-            if(str[index - 2] == '-')
-            {
-                n *= -1;
-            }
-            
-            // add number into previous sum
-            sumArray[arrIndex] += n;
-            arrIndex++;
         }
+        // negate value if '-' is present before number
+        if(str[index - 2] == '-')
+        {
+            n *= -1;
+        }
+        
+        // add number into previous sum
+        sumArray[arrIndex] += n;
+        arrIndex++;
     }
     
     // Sum every value in the sumArray
