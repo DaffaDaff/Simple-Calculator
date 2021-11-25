@@ -14,16 +14,89 @@ int getLength(char str[])
     }
 }
 
+// This funcion validate symbols and format
+// current valid symbol is: '+', '-'
+//
+// format should look like this:
+// <Number><Space><Operator><Space><Number><Space><Operator>...
+int validate(char str[], int len)
+{
+    int isSpace = 0; // 0 is non space, 1 is space
+    int state = 0; // state 0 is number, state 1 is operator
+    
+    for(int i = 0; i < len; i++)
+    {
+        if(isSpace)
+        {
+            isSpace = 0;
+            
+            if(str[i] == ' ')
+            {
+                continue;
+            }
+            else 
+            {
+                printf("ERROR: Invalid Spacing");
+                return 0;
+            }
+        }
+        else
+        {
+            isSpace = 1;
+            
+            if(state == 0)
+            {
+                state = 1;
+                
+                if(str[i] >= 48 && str[i] <= 57)
+                {
+                    continue;
+                }
+                else if(str[i] == ' ')
+                {
+                    printf("ERROR: Invalid Spacing");
+                    return 0;
+                }
+                else 
+                {
+                    printf("ERROR: Invalid Number");
+                    return 0;
+                }
+            }
+            else if (state == 1)
+            {
+                state = 0;
+                
+                switch (str[i])
+                {
+                    case ' ':
+                        printf("ERROR: Invalid Spacing");
+                        return 0;
+                    case '+':
+                        continue;
+                    case '-':
+                        continue;
+                    default:
+                        printf("ERROR: Unknown Operator");
+                        return 0;
+                }
+            }
+        }
+    }
+    
+    return 1;
+}
+
 int main()
 {
     char str[500];
     int len;
     
-    scanf("%s", str);
+    scanf("%[^\n]s", str);
     
     len = getLength(str);
     
-    
+    if( !validate(str, len) ) return -1;
     
     return 0;
 }
