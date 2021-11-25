@@ -27,6 +27,7 @@ int getLength(char str[])
 }
 
 // Power
+// Basic Power Calculation
 int pwr(int n, int p)
 {
     int result = 1;
@@ -137,7 +138,7 @@ int intFromString(char str[], int startIndex, int digit)
 //
 // format should look like this:
 // <Number><Space><Operator><Space><Number><Space><Operator>...
-int validate(char str[], int len)
+int Validate(char str[], int len)
 {
     int isSpace = 0; // 0 is non space, 1 is space
     int state = 0; // state 0 is number, state 1 is operator
@@ -204,6 +205,8 @@ int validate(char str[], int len)
                         continue;
                     case '/':
                         continue;
+                    case '^':
+                        continue;
                     default:
                         printf("ERROR: Unknown Operator");
                         return 0;
@@ -213,6 +216,50 @@ int validate(char str[], int len)
     }
     
     return 1;
+}
+
+// Power Calculation
+//
+// Calculate power from a string sequence
+// 
+int PowCalculation(char str[], int len)
+{
+    int result = 1;
+    
+    // array of stored integer number
+    int arr[len];
+    clearArray(arr, len);
+    
+    int arrIndex = 0;
+    
+    for(int i = 0; i <= len; i++)
+    {
+        if(str[i] >= 48 && str[i] <= 57)
+        {
+            int index = i;
+            
+            // Convert the string number into integer
+            int digit;
+            digit = findDigit(str, index);
+            
+            i += digit;
+            
+            int n = intFromString(str, index, digit);
+            
+            // Store integer number n to array
+            arr[arrIndex] = n;
+            arrIndex++;
+        }
+    }
+    
+    // Start calculating pow array
+    // calculation start from the end of sequence, because power calculation start from the very top/back
+    for(int i = arrIndex - 1; i >= 0; i--)
+    {
+        result = pwr(arr[i], result);
+    }
+    
+    return result;
 }
 
 // Multiplication & Division Calculation
@@ -258,7 +305,7 @@ int MultDivCalculation(char str[], int len)
 // 2. every number in string will be converted into integer
 // 3. number will be stored in sum array
 // 4. all value in array will be summed
-int calculation(char str[], int len)
+int Calculation(char str[], int len)
 {
     int sumArray[len];
     clearArray(sumArray, len); // Clear array value to zero
@@ -276,8 +323,38 @@ int calculation(char str[], int len)
             int digit;
             digit = findDigit(str, index);
             
+            // Power Check
+            if(str[index + digit + 1] == '^')
+            {
+                // string of Mult/Div sequence
+                char nStr[len];
+                clearString(nStr, len);
+                
+                int length;
+                
+                // Write sequence from main string
+                for(int j = 0; i < len; j++, i++)
+                {
+                    // Stop when there is addition/subtraction
+                    if( str[i] == '+' || str[i] == '-')
+                    {
+                        break;
+                    }
+                    // Stop when there is multiplication/division
+                    if( str[i] == '*' || str[i] == '/')
+                    {
+                        break;
+                    }
+                    
+                    nStr[j] = str[i]; // Write every char into string sequnce
+                    length = j;
+                }
+                
+                // Start Calculation
+                n = PowCalculation(nStr, length);
+            }
             // Multiplication & Division Check
-            if(str[i + digit + 1] == '*' || str[i + digit + 1] == '/')
+            else if(str[index + digit + 1] == '*' || str[index + digit + 1] == '/')
             {
                 // string of Mult/Div sequence
                 char nStr[len];
@@ -340,9 +417,9 @@ int main()
     
     len = getLength(str);
     
-    if( !validate(str, len) ) return -1;
+    if( !Validate(str, len) ) return -1;
     
-    printf("%d", calculation(str, len));
+    printf("%d", Calculation(str, len));
     
     return 0;
 }
