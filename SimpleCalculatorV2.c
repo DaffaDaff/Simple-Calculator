@@ -5,13 +5,40 @@
 char str[500];
 int lenght;
 
+// Remove String Element
+// Remove element in an index of a string
+const char * removeStrElement(char nStr[], int *len, int index)
+{
+    for(int i = index; i < *len; i++)
+    {
+        nStr[i] = nStr[i + 1];
+    }
+    
+    *len--;
+    
+    return nStr;
+}
+
+// Remove Spaces
+// Remove Spaces from a string
+const char * removeSpaces(char nStr[], int len)
+{
+    for(int i = 0; i < len; i++)
+    {
+        if (nStr[i] == ' ')
+            removeStrElement(nStr, &len, i);
+    }
+    
+    return nStr;
+}
+
 //Validation
 // This funcion validate symbols and format
 // current valid symbol is: '+', '-'
 //
 // format should look like this:
 // <Number><Space><Operator><Space><Number><Space><Operator>...
-int Validate(char str[], int len)
+int Validate(char nStr[], int len)
 {
     int isSpace = 0; // 0 is non space, 1 is space
     int state = 0; // state 0 is number, state 1 is operator
@@ -23,10 +50,8 @@ int Validate(char str[], int len)
         {
             isSpace = 0;
             
-            if(str[i] == ' ')
-            {
+            if(nStr[i] == ' ')
                 continue;
-            }
             else 
             {
                 printf("ERROR: Invalid Spacing");
@@ -40,7 +65,7 @@ int Validate(char str[], int len)
             if(state == 0)
             {
                 // Parenthesis check
-                if (str[i] == '(')
+                if (nStr[i] == '(')
                 {
                     parenthesisCount++;
                     continue;
@@ -49,10 +74,10 @@ int Validate(char str[], int len)
                 state = 1;
                 
                 //Number check
-                if(str[i] >= 48 && str[i] <= 57)
+                if(nStr[i] >= 48 && str[i] <= 57)
                 {
                     // check if there is still number after this (more digit)
-                    if(str[i + 1] >= 48 && str[i] <= 57)
+                    if(nStr[i + 1] >= 48 && nStr[i] <= 57)
                     {
                         state = 0;
                         isSpace = 0;
@@ -60,7 +85,7 @@ int Validate(char str[], int len)
                     
                     continue;
                 }
-                else if(str[i] == ' ')
+                else if(nStr[i] == ' ')
                 {
                     printf("ERROR: Invalid Spacing");
                     return 0;
@@ -74,7 +99,7 @@ int Validate(char str[], int len)
             else if (state == 1)
             {
                 // Parenthesis check
-                if(str[i] == ')')
+                if(nStr[i] == ')')
                 {
                     parenthesisCount--;
                     continue;
@@ -83,7 +108,7 @@ int Validate(char str[], int len)
                 state = 0;
                 
                 // Operator check
-                switch (str[i])
+                switch (nStr[i])
                 {
                     case ' ':
                         printf("ERROR: Invalid Spacing");
@@ -109,13 +134,17 @@ int Validate(char str[], int len)
     return 1;
 }
 
-int start()
+void start()
 {
     printf("Enter Operation: \n");
     scanf("%[^\n]s", str);
     
     lenght = strlen(str);
-    printf("%d", lenght);
+    
+    if(!Validate(str, lenght)) 
+        return;
+    
+    removeSpaces(str, lenght);
 }
 
 int main()
