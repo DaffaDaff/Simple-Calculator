@@ -1,3 +1,10 @@
+/*
+Simple Calculator
+By Sulthan Daffa Arif Mahmudi
+
+https://github.com/DaffaDaff
+*/
+
 #include <stdio.h>
 
 
@@ -558,3 +565,5 @@ int main()
     
     return 0;
 }
+
+//2021 - Sulthan Daffa Arif Mahmudi
