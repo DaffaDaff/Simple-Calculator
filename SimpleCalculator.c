@@ -90,6 +90,47 @@ const int * clearArray(int arr[], int len)
     }
 }
 
+// Find Digit
+// Find how many digit in input string number
+int findDigit(char str[], int startIndex)
+{
+    int dit;
+    int len = getLength(str);
+    for (int i = 0, j = startIndex; i <= len; i++, j++)
+    {
+        if(!(str[j] >= 48 && str[j] <= 57))
+        {
+            dit = i;
+            break;
+        }
+    }
+    
+    return dit;
+}
+
+// Find Integer From string
+// Find number from string starting from startIndex
+int intFromString(char str[], int startIndex, int digit)
+{
+    char nStr[digit];
+    clearString(nStr, digit);
+            
+    // Write every integer char into string
+    for (int j = 0, i = startIndex; j <= digit; j++, i++)
+        {
+        if(str[i] >= 48 && str[i] <= 57)
+        {
+            nStr[j] = str[i];
+        }
+        else 
+        {
+            nStr[j] = 0;
+        }
+    }
+    
+    return str2int(nStr); // Convert integer string to integer
+}
+
 //Validation
 // This funcion validate symbols and format
 // current valid symbol is: '+', '-'
@@ -159,6 +200,10 @@ int validate(char str[], int len)
                         continue;
                     case '-':
                         continue;
+                    case '*':
+                        continue;
+                    case '/':
+                        continue;
                     default:
                         printf("ERROR: Unknown Operator");
                         return 0;
@@ -170,12 +215,55 @@ int validate(char str[], int len)
     return 1;
 }
 
+// Multiplication & Division Calculation
+//
+// Calculate multiplication and division from a string
+// 
+int MultDivCalculation(char str[], int len, int startIndex)
+{
+    int result = 1;
+    
+    // Start Mult/Div sequence from startIndex of str
+    for(int i = startIndex; i < len; i++)
+    {
+        if(str[i] >= 48 && str[i] <= 57)
+        {
+            int index = i;
+            
+            // Convert the string number into integer
+            int digit;
+            digit = findDigit(str, index);
+            
+            i += digit;
+            
+            int n = intFromString(str, index, digit);
+            
+            
+            if(index == startIndex) result = n;
+            else if(str[index - 2] == '*'){
+                result *= n;}
+            else if(str[index - 2] == '/')
+                result /= n;
+        }
+        
+        // Check for addition & subtraction symbol
+        // If found then the sequence ends
+        if( str[i] == '+' || str[i] == '-')
+            break;
+    }
+    
+    
+    
+    return result;
+}
+
 // Calculation
 //
 // How it works:
-// 1. every number in string will be converted into integer
-// 2. number will be stored in sum array
-// 3. all value in array will be summed
+// 1. check if operator after number is multiplication or division, if yes then mult/div sequences will calculated first in another function
+// 2. every number in string will be converted into integer
+// 3. number will be stored in sum array
+// 4. all value in array will be summed
 int calculation(char str[], int len)
 {
     int sumArray[len];
@@ -187,38 +275,27 @@ int calculation(char str[], int len)
     {
         if(str[i] >= 48 && str[i] <= 57)
         {
+            int n;
             int index = i; // define index where the number start
             
-            // Find how many digit in the number
-            int digit;
-            for (int j = 0, k = i; j <= len; j++, k++)
+            if(str[i + 2] == '*' || str[i + 2] == '/')\
             {
-                if(!(str[k] >= 48 && str[k] <= 57))
+                for(int j = i; j < len; j++, i++)
                 {
-                    digit = j;
-                    break;
+                    if( str[i] == '+' || str[i] == '-')
+                        break;
                 }
+                
+                n = MultDivCalculation(str, len, index);
             }
-            
-            // string for number
-            // adding digits in number into string and convert string into integer
-            char nStr[digit];
-            clearString(nStr, digit);
-            
-            // Write every integer char into string until space
-            for (int j = 0; j <= digit; j++, i++)
-            {
-                if(str[i] >= 48 && str[i] <= 57)
-                {
-                    nStr[j] = str[i];
-                }
-                else 
-                {
-                    nStr[j] = 0;
-                }
+            else {
+                int digit;
+                digit = findDigit(str, index);
+                
+                i += digit;
+                
+                n = intFromString(str, index, digit);
             }
-            
-            int n = str2int(nStr); // Convert integer string to integer
             
             // negate value if '-' is present before number
             if(str[index - 2] == '-')
@@ -258,3 +335,4 @@ int main()
     
     return 0;
 }
+
