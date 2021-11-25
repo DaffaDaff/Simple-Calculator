@@ -22,6 +22,7 @@ void printArray(int arr[], int len)
 // Get Length
 // Function to get length of a string
 // from start to end of char
+// you can also use strlen() from <string.h>
 int getLength(char str[])
 {
     for(int i = 0; i < 500; i++)
@@ -50,6 +51,7 @@ int getPrntsLength(char str[], int startIndex, int len)
 
 // Power
 // Basic Power Calculation
+// You can also use pow() from <math.h>
 int pwr(int n, int p)
 {
     int result = 1;
@@ -72,6 +74,7 @@ int char2int(char c)
 
 // String to Integer
 // convert integer string ("1", "23", "456", etc) to integer (1, 23, 456, etc)
+// you can also use atoi() from <string.h>
 int str2int(char str[])
 {
     int len = getLength(str);
