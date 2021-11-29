@@ -1,9 +1,27 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
+
 char str[500];
 int lenght;
+
+int findDigitFromString(char nStr[], int startIndex)
+{
+    int dit;
+    int len = strlen(nStr);
+    for (int i = 0, j = startIndex; i <= len; i++, j++)
+    {
+        if(!(nStr[j] >= 48 && nStr[j] <= 57) || !nStr[j] == '-')
+        {
+            dit = i;
+            break;
+        }
+    }
+    
+    return dit;
+}
 
 // Remove String Element
 // Remove element in an index of a string
@@ -23,27 +41,44 @@ const char * removeStrElement(char nStr[], int *len, int index)
 // Insert element in an index of a string
 const char * insertStrElement(char nStr[], int *len, int index, char value)
 {
+    
     for(int i = *len; i >= index; i--)
     {
-        if(i == index) str[i] = value;
+        if(i == index) nStr[i] = value;
         else nStr[i] = nStr[i - 1];
     }
+    if(*len == index) nStr[index] = value;
     
     *len += 1;
+    
+
+    return nStr;
+}
+
+// Insert String Element
+// Insert element in an index of a string
+const char * insertStrElementWithInt(char nStr[], int *len, int index, int value)
+{
+    char intStr[*len];
+    sprintf(intStr, "%d", value);
+    
+    for (int i = index, j = 0; j < findDigitFromString(intStr, 0); i++, j++)
+    {
+        insertStrElement(nStr, &*len, i, intStr[j]);
+    }
     
     return nStr;
 }
 
 // Remove Spaces
 // Remove Spaces from a string
-const char * removeSpaces(char nStr[], int len)
+const char * removeSpaces(char nStr[], int *len)
 {
-    for(int i = 0; i < len; i++)
+    for(int i = 0; i < *len; i++)
     {
         if (nStr[i] == ' ')
         {
-            removeStrElement(nStr, &len, i); 
-            lenght = len;
+            removeStrElement(nStr, &*len, i); 
         }
     }
     
@@ -152,6 +187,70 @@ int Validate(char nStr[], int len)
     return 1;
 }
 
+const char * PowCalculation(char nStr[], int len, int index)
+{
+    //printf(" %d ", index);
+    for (int i = index; i < len; i++)
+    {
+        if(nStr[i] == '^')
+        {
+            while(nStr[i - 1] >= '0' && nStr[i - 1] <= '9')
+                i--;
+            
+            int index1 = i;
+            int digit1 = findDigitFromString(nStr, i);
+            int n1;
+            
+            char intStr1[digit1];
+            for(int j = 0; j < digit1; j++, i++)
+                intStr1[0] = nStr[i];
+            
+            n1 = atoi(intStr1);
+            
+            i++;
+            
+            int index2 = i;
+            int digit2 = findDigitFromString(nStr, i);
+            int n2;
+            
+            if(nStr[i + digit2] == '^')
+            {
+                PowCalculation(nStr, len, i);
+                digit2 = findDigitFromString(nStr, i);
+            }
+            
+            char intStr2[digit2];
+            for(int j = 0; j < digit2; j++, i++)
+                intStr2[0] = nStr[i];
+            
+            n2 = atoi(intStr2);
+            
+            for(int k = 0; k <= digit1 + digit2; k++)
+            {
+                
+                removeStrElement(nStr, &len, index1);
+            }
+            
+            int n = pow(n1, n2);
+            
+            insertStrElementWithInt(nStr, &len, index1, n);
+            
+            i = index;
+        }
+    }
+    
+    return nStr;
+}
+
+int Calculate(char nStr[], int len)
+{
+    removeSpaces(nStr, &len);
+    
+    PowCalculation(nStr, len, 0);
+    
+    puts(nStr);
+}
+
 void start()
 {
     printf("Enter Operation: \n");
@@ -161,8 +260,8 @@ void start()
     
     if(!Validate(str, lenght)) 
         return;
-    
-    removeSpaces(str, lenght);
+
+    Calculate(str, lenght);
 }
 
 int main()
