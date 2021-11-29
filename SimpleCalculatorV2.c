@@ -205,21 +205,30 @@ const char * ParenthesisCalculation(char nStr[], int len)
             
             i++;
             
-            char intStr[len];
+            int sLen;
             for(int j = 0; i < len; i++, j++)
             {
                 if(nStr[i] == ')' && parenthesisCount == 0)
+                {
+                    sLen = j;
                     break;
-                
-                intStr[j] = nStr[i];
-                
+                }
+
                 if(nStr[i] == '(')
                     parenthesisCount++;
                 else if(nStr[i] == ')')
                     parenthesisCount--;
             }
+
+            i -= sLen;
+
+            char intStr[sLen];
+            for(int j = 0; j < sLen; i++, j++)
+            {
+                intStr[j] = nStr[i];
+            }
             
-            for(int k = 0; k < strlen(intStr) + 1; k++)
+            for(int k = 0; k < sLen + 2; k++)
             {
                 removeStrElement(nStr, &len, index);
             }
@@ -411,6 +420,7 @@ int Calculate(char nStr[], int len)
     removeSpaces(nStr, &len);
     
     ParenthesisCalculation(nStr, len);
+    
     PowCalculation(nStr, len, 0);
     MultDivCalculation(nStr, len);
     AddSubtractCalculation(nStr, len);
