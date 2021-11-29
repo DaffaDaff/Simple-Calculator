@@ -430,6 +430,7 @@ void start()
 
     int n = Calculate(str, lenght);
     
+    printf("Result:\n");
     printf("%d", n);
 }
 
