@@ -3,9 +3,10 @@
 #include <string.h>
 #include <math.h>
 
-
 char str[500];
 int lenght;
+
+int Calculate(char nStr[], int len);
 
 int findDigitFromString(char nStr[], int startIndex)
 {
@@ -187,9 +188,50 @@ int Validate(char nStr[], int len)
     return 1;
 }
 
+const char * ParenthesisCalculation(char nStr[], int len)
+{
+    for(int i = 0; i < len; i++)
+    {
+        if(nStr[i] == '(')
+        {
+            int index = i;
+            
+            int parenthesisCount = 0;
+            
+            i++;
+            
+            char intStr[len];
+            for(int j = 0; i < len; i++, j++)
+            {
+                if(nStr[i] == ')' && parenthesisCount == 0)
+                    break;
+                
+                intStr[j] = nStr[i];
+                
+                if(nStr[i] == '(')
+                    parenthesisCount++;
+                else if(nStr[i] == ')')
+                    parenthesisCount--;
+            }
+            
+            for(int k = 0; k < strlen(intStr) + 1; k++)
+            {
+                removeStrElement(nStr, &len, index);
+            }
+            
+            int n = Calculate(intStr, strlen(intStr));
+            
+            insertStrElementWithInt(nStr, &len, index, n);
+            
+            i = 0;
+        }
+    }
+    
+    return nStr;
+}
+
 const char * PowCalculation(char nStr[], int len, int index)
 {
-    //printf(" %d ", index);
     for (int i = index; i < len; i++)
     {
         if(nStr[i] == '^')
@@ -282,7 +324,6 @@ const char * MultDivCalculation(char nStr[], int len)
             
             for(int k = 0; k <= digit1 + digit2; k++)
             {
-                
                 removeStrElement(nStr, &len, index1);
             }
             
@@ -364,11 +405,12 @@ int Calculate(char nStr[], int len)
 {
     removeSpaces(nStr, &len);
     
+    ParenthesisCalculation(nStr, len);
     PowCalculation(nStr, len, 0);
     MultDivCalculation(nStr, len);
     AddSubtractCalculation(nStr, len);
     
-    puts(nStr);
+    return atoi(nStr);
 }
 
 void start()
@@ -381,7 +423,9 @@ void start()
     if(!Validate(str, lenght)) 
         return;
 
-    Calculate(str, lenght);
+    int n = Calculate(str, lenght);
+    
+    printf("%d", n);
 }
 
 int main()
@@ -390,7 +434,3 @@ int main()
     
     return 0;
 }
-
-
-
-
