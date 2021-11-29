@@ -203,7 +203,7 @@ const char * PowCalculation(char nStr[], int len, int index)
             
             char intStr1[digit1];
             for(int j = 0; j < digit1; j++, i++)
-                intStr1[0] = nStr[i];
+                intStr1[j] = nStr[i];
             
             n1 = atoi(intStr1);
             
@@ -221,7 +221,7 @@ const char * PowCalculation(char nStr[], int len, int index)
             
             char intStr2[digit2];
             for(int j = 0; j < digit2; j++, i++)
-                intStr2[0] = nStr[i];
+                intStr2[j] = nStr[i];
             
             n2 = atoi(intStr2);
             
@@ -242,11 +242,71 @@ const char * PowCalculation(char nStr[], int len, int index)
     return nStr;
 }
 
+const char * MultDivCalculation(char nStr[], int len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        if(nStr[i] == '*' || nStr[i] == '/')
+        {
+            int mode;
+            if(nStr[i] == '*')
+                mode = 0;
+            else if(nStr[i] == '/')
+                mode = 1;
+            
+            while(nStr[i - 1] >= '0' && nStr[i - 1] <= '9')
+                i--;
+            
+            int index1 = i;
+            int digit1 = findDigitFromString(nStr, i);
+            int n1;
+            
+            char intStr1[digit1];
+            for(int j = 0; j < digit1; j++, i++)
+                intStr1[j] = nStr[i];
+            
+            n1 = atoi(intStr1);
+            
+            i++;
+            
+            int index2 = i;
+            int digit2 = findDigitFromString(nStr, i);
+            int n2;
+            
+            
+            char intStr2[digit2];
+            for(int j = 0; j < digit2; j++, i++)
+                intStr2[j] = nStr[i];
+            
+            n2 = atoi(intStr2);
+            
+            for(int k = 0; k <= digit1 + digit2; k++)
+            {
+                
+                removeStrElement(nStr, &len, index1);
+            }
+            
+            int n;
+            if(mode == 0)
+                n = n1 * n2;
+            else if(mode == 1)
+                n = n1 / n2;
+            
+            insertStrElementWithInt(nStr, &len, index1, n);
+            
+            i = 0;
+        }
+    }
+    
+    return nStr; 
+}
+
 int Calculate(char nStr[], int len)
 {
     removeSpaces(nStr, &len);
     
     PowCalculation(nStr, len, 0);
+    MultDivCalculation(nStr, len);
     
     puts(nStr);
 }
@@ -270,3 +330,7 @@ int main()
     
     return 0;
 }
+
+
+
+
