@@ -154,7 +154,8 @@ int Validate(char nStr[], int len)
     int isSpace = 0; // 0 is non space, 1 is space
     int state = 0; // state 0 is number, state 1 is operator
     int parenthesisCount; // counter for parenthesis, +1 if '(' and -1 if ')'. by the end of validation, this value should be 0
-    
+    int isPassFirstNumber = 0; // is Validation already check first number in string
+
     for(int i = 0; i < len; i++)
     {
         if(nStr[0] == ' ') 
@@ -163,10 +164,10 @@ int Validate(char nStr[], int len)
             continue;
         }
         
-        if(nStr[0] == '-')
+        if(nStr[i] == '-' && !isPassFirstNumber)
         {
-            removeStrElement(nStr, &len, 0);
-            insertStrElement(nStr, &len, 0, 'n');
+            removeStrElement(nStr, &len, i);
+            insertStrElement(nStr, &len, i, 'n');
             isSpace = 1;
             continue;
         }
@@ -186,7 +187,7 @@ int Validate(char nStr[], int len)
         else
         {
             isSpace = 1;
-            
+
             if(state == 0)
             {
                 // Parenthesis check
@@ -197,12 +198,14 @@ int Validate(char nStr[], int len)
                 }
                 
                 state = 1;
-                
+
                 //Number check
-                if(nStr[i] >= 48 && str[i] <= 57)
+                if(isNumber(nStr[i]))
                 {
+                    if(!isPassFirstNumber) isPassFirstNumber = 1; // Set PassFirstNumber to true
+
                     // check if there is still number after this (more digit)
-                    if(nStr[i + 1] >= 48 && nStr[i] <= 57)
+                    if(isNumber(nStr[i + 1]))
                     {
                         state = 0;
                         isSpace = 0;
