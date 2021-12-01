@@ -15,12 +15,16 @@ const char * Calculate(char nStr[], int len);
 const char * addition(char result[], char a[], char b[], int digita, int digitb, int * digitResult);
 const char * subtraction(char result[], char a[], char b[], int digita, int digitb, int * digitResult);
 
+// Check is Number
+// Check if given char is a number
 int isNumber(char value)
 {
     if(value >= '0' && value <= '9') return 1;
     else return 0;
 }
 
+// Find Digit From String
+// Find digit of integer from string
 int findDigitFromString(char nStr[], int startIndex)
 {
     int dit;
@@ -81,8 +85,8 @@ const char * insertStrElement(char nStr[], int *len, int index, char value)
     return nStr;
 }
 
-// Insert String Element
-// Insert element in an index of a string
+// Insert String Element with Integer
+// Insert integer to a string
 const char * insertStrElementWithInt(char nStr[], int *len, int index, int value)
 {
     char intStr[*len];
@@ -96,6 +100,8 @@ const char * insertStrElementWithInt(char nStr[], int *len, int index, int value
     return nStr;
 }
 
+// Insert String Element
+// Insert string into another string
 const char * insertStrElementWithStr(char nStr[], int *len, int index, char value[])
 {    
     for (int i = index, j = 0; j < findDigitFromString(value, 0); i++, j++)
@@ -121,6 +127,8 @@ const char * removeSpaces(char nStr[], int *len)
     return nStr;
 }
 
+// Remove Zero In Front of Integer
+// Remove zeros in fronnt of an integer
 const char * removeZeroInfront(char nStr[], int *len)
 {
     int index = 0;
@@ -251,6 +259,8 @@ int Validate(char nStr[], int len)
     return 1;
 }
 
+// String Addition
+// Add two string containing numbers
 const char * addition(char result[], char a[], char b[], int digita, int digitb, int * digitResult)
 {
     
@@ -319,6 +329,8 @@ const char * addition(char result[], char a[], char b[], int digita, int digitb,
     return result;
 }
 
+// String Subtraction
+// Subtract two string containing integer
 const char * subtraction(char result[], char a[], char b[], int digita, int digitb, int * digitResult)
 {
     if(a[0] == 'n' && b[0] == 'n')
@@ -397,6 +409,9 @@ const char * subtraction(char result[], char a[], char b[], int digita, int digi
     return result;
 }
 
+// String Multiplication
+// Multiplication of two string containing number
+// Mulltiply string a by string b
 const char * multiplication(char result[], char a[], char b[], int digita, int digitb, int * digitResult)
 {
     char tempa[digita];
@@ -420,6 +435,9 @@ const char * multiplication(char result[], char a[], char b[], int digita, int d
     return result;
 }
 
+// String Division
+// Division of two string containing number
+// Divide string a by string b
 const char * division(char result[], char a[], char b[], int digita, int digitb, int * digitResult)
 {
     char tempa[digita];
@@ -441,6 +459,9 @@ const char * division(char result[], char a[], char b[], int digita, int digitb,
     return result;
 }
 
+// String Exponent
+// Exponent of two string containing number
+// Power string a by string b
 const char * power(char result[], char a[], char b[], int digita, int digitb, int * digitResult)
 {
     char tempa[digita];
@@ -464,6 +485,8 @@ const char * power(char result[], char a[], char b[], int digita, int digitb, in
     return result;
 }
 
+// Parenthesis Calculation
+// Calculating operations inside of a parenthesis
 const char * ParenthesisCalculation(char nStr[], int len)
 {
     for(int i = 0; i < len; i++)
@@ -515,6 +538,8 @@ const char * ParenthesisCalculation(char nStr[], int len)
     return nStr;
 }
 
+// Power Calculation
+// Calculation of Exponent in a string of operation
 const char * PowCalculation(char nStr[], int len, int index)
 {
     for (int i = index; i < len; i++)
@@ -567,6 +592,8 @@ const char * PowCalculation(char nStr[], int len, int index)
     return nStr;
 }
 
+// Multiplication / Division Calculation
+// Calculation of Multiplication and Division in a string of operation
 const char * MultDivCalculation(char nStr[], int len)
 {
     for (int i = 0; i < len; i++)
@@ -621,6 +648,8 @@ const char * MultDivCalculation(char nStr[], int len)
     return nStr; 
 }
 
+// Addition / Subtraction Calculation
+// Calculation of Addition and Subtraction in a string of operation
 const char * AddSubtractCalculation(char nStr[], int len)
 {
     for (int i = 0; i < len; i++)
@@ -677,6 +706,9 @@ const char * AddSubtractCalculation(char nStr[], int len)
     return nStr; 
 }
 
+// Calculate
+// Main Calculation Function
+// Calculate various operations
 const char * Calculate(char nStr[], int len)
 {
     removeSpaces(nStr, &len);
@@ -690,6 +722,7 @@ const char * Calculate(char nStr[], int len)
     return nStr;
 }
 
+// Start Program
 void start()
 {
     printf("Enter Operation: \n");
