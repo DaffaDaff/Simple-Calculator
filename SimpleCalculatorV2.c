@@ -149,6 +149,20 @@ int Validate(char nStr[], int len)
     
     for(int i = 0; i < len; i++)
     {
+        if(nStr[0] == ' ') 
+        {
+            removeStrElement(nStr, &len, 0);
+            continue;
+        }
+        
+        if(nStr[0] == '-')
+        {
+            removeStrElement(nStr, &len, 0);
+            insertStrElement(nStr, &len, 0, 'n');
+            isSpace = 1;
+            continue;
+        }
+        
         if(isSpace)
         {
             isSpace = 0;
