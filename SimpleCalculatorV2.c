@@ -6,141 +6,63 @@ https://github.com/DaffaDaff
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
-char str[500];
-int lenght;
+#pragma region Function Prototype
 
-const char * Calculate(char nStr[], int len);
+void startCalculator();
+int Validate(char nStr[], int len);
+
 const char * addition(char result[], char a[], char b[], int digita, int digitb, int * digitResult);
 const char * subtraction(char result[], char a[], char b[], int digita, int digitb, int * digitResult);
+const char * multiplication(char result[], char a[], char b[], int digita, int digitb, int * digitResult);
+const char * division(char result[], char a[], char b[], int digita, int digitb, int * digitResult);
+const char * power(char result[], char a[], char b[], int digita, int digitb, int * digitResult);
 
-// Check is Number
-// Check if given char is a number
-int isNumber(char value)
+const char * Calculate(char nStr[], int len);
+const char * ParenthesisCalculation(char nStr[], int len);
+const char * PowCalculation(char nStr[], int len, int index);
+const char * MultDivCalculation(char nStr[], int len);
+const char * AddSubtractCalculation(char nStr[], int len);
+
+int isNumber(char value);
+int findDigitFromString(char nStr[], int startIndex);
+void revstr(char * nStr, int len);
+const char * removeStrElement(char nStr[], int *len, int index);
+const char * insertStrElement(char nStr[], int *len, int index, char value);
+const char * insertStrElementWithInt(char nStr[], int *len, int index, int value);
+const char * insertStrElementWithStr(char nStr[], int *len, int index, char value[]);
+const char * removeSpaces(char nStr[], int *len);
+const char * removeZeroInfront(char nStr[], int *len);
+
+#pragma endregion Function Prototype
+
+
+int main()
 {
-    if(value >= '0' && value <= '9') return 1;
-    else return 0;
+    startCalculator();
+    
+    return 0;
 }
 
-// Find Digit From String
-// Find digit of integer from string
-int findDigitFromString(char nStr[], int startIndex)
+// Start Calculator
+void startCalculator()
 {
-    int dit;
-    int len = strlen(nStr);
-    for (int i = 0, j = startIndex; i <= len; i++, j++)
-    {
-        if(!(isNumber(nStr[j]) || nStr[j] == 'n'))
-        {
-            dit = i;
-            break;
-        }
-    }
-    
-    return dit;
-}
+    char str[500];
+    int lenght;
 
-// Reverse String
-// Reverse a String
-void revstr(char * nStr, int len)
-{
-    for(int i = 0; i < len/2; i++)
-    {
-        int temp = nStr[i];
-        nStr[i] = nStr[len - i - 1];
-        nStr[len - i - 1] = temp;
-    }
-}
-
-// Remove String Element
-// Remove element in an index of a string
-const char * removeStrElement(char nStr[], int *len, int index)
-{
-    for(int i = index; i < *len; i++)
-    {
-        nStr[i] = nStr[i + 1];
-    }
+    printf("Enter Operation: \n");
+    scanf("%[^\n]s", str);
     
-    *len -= 1;
+    lenght = strlen(str);
     
-    return nStr;
-}
-
-// Insert String Element
-// Insert element in an index of a string
-const char * insertStrElement(char nStr[], int *len, int index, char value)
-{
+    if(!Validate(str, lenght)) 
+        return;
     
-    for(int i = *len; i >= index; i--)
-    {
-        if(i == index) nStr[i] = value;
-        else nStr[i] = nStr[i - 1];
-    }
-    if(*len == index) nStr[index] = value;
+    printf("Result:\n");
+    Calculate(str, lenght);
+    if(str[0] == 'n') str[0] = '-';
     
-    *len += 1;
-    
-
-    return nStr;
-}
-
-// Insert String Element with Integer
-// Insert integer to a string
-const char * insertStrElementWithInt(char nStr[], int *len, int index, int value)
-{
-    char intStr[*len];
-    sprintf(intStr, "%d", value);
-    
-    for (int i = index, j = 0; j < findDigitFromString(intStr, 0); i++, j++)
-    {
-        insertStrElement(nStr, &*len, i, intStr[j]);
-    }
-    
-    return nStr;
-}
-
-// Insert String Element
-// Insert string into another string
-const char * insertStrElementWithStr(char nStr[], int *len, int index, char value[])
-{    
-    for (int i = index, j = 0; j < findDigitFromString(value, 0); i++, j++)
-    {
-        insertStrElement(nStr, &*len, i, value[j]);
-    }
-    
-    return nStr;
-}
-
-// Remove Spaces
-// Remove Spaces from a string
-const char * removeSpaces(char nStr[], int *len)
-{
-    for(int i = 0; i < *len; i++)
-    {
-        if (nStr[i] == ' ')
-        {
-            removeStrElement(nStr, &*len, i); 
-        }
-    }
-    
-    return nStr;
-}
-
-// Remove Zero In Front of Integer
-// Remove zeros in fronnt of an integer
-const char * removeZeroInfront(char nStr[], int *len)
-{
-    int index = 0;
-    while(1)
-    {
-        if(index + 1 == *len) break;
-        
-        if(nStr[index] == 'n') index++;
-        if(nStr[index] == '0') removeStrElement(nStr, &*len, index);
-        else if(isNumber(nStr[index])) break;
-    }
-    return nStr;
+    printf("%s", str);
 }
 
 //Validation
@@ -261,6 +183,8 @@ int Validate(char nStr[], int len)
     
     return 1;
 }
+
+#pragma region String Arithmetic
 
 // String Addition
 // Add two string containing numbers
@@ -425,6 +349,20 @@ const char * multiplication(char result[], char a[], char b[], int digita, int d
     
     *digitResult = 1;
     strcpy(result, "0");
+
+    int isNegative = 0;
+
+    if(tempa[0] == 'n')
+    {
+        isNegative = !isNegative;
+        removeStrElement(tempa, &digita, 0);
+    }
+    if(tempb[0] == 'n')
+    {
+        isNegative = !isNegative;
+        removeStrElement(tempb, &digitb, 0);
+    }
+
     while(1)
     {
         subtraction(tempb, tempb, "1", digitb, 1, &digitb);
@@ -434,6 +372,8 @@ const char * multiplication(char result[], char a[], char b[], int digita, int d
         addition(result, result, tempa, *digitResult, digita, &*digitResult);
         
     }
+
+    if(isNegative) insertStrElement(result, &*digitResult, 0, 'n');
 
     return result;
 }
@@ -451,6 +391,20 @@ const char * division(char result[], char a[], char b[], int digita, int digitb,
 
     *digitResult = 1;
     strcpy(result, "0");
+
+    int isNegative = 0;
+
+    if(tempa[0] == 'n')
+    {
+        isNegative = !isNegative;
+        removeStrElement(tempa, &digita, 0);
+    }
+    if(tempb[0] == 'n')
+    {
+        isNegative = !isNegative;
+        removeStrElement(tempb, &digitb, 0);
+    }
+
     while(1)
     {
         subtraction(tempa, tempa, tempb, digita, digitb, &digita);
@@ -458,6 +412,8 @@ const char * division(char result[], char a[], char b[], int digita, int digitb,
 
         addition(result, result, "1", *digitResult, 1, &*digitResult);
     }
+
+    if(isNegative) insertStrElement(result, &*digitResult, 0, 'n');
 
     return result;
 }
@@ -476,6 +432,19 @@ const char * power(char result[], char a[], char b[], int digita, int digitb, in
     *digitResult = 1;
     strcpy(result, "1");
     
+    int isNegative = 0;
+
+    if(tempa[0] == 'n')
+    {
+        isNegative = !isNegative;
+        removeStrElement(tempa, &digita, 0);
+    }
+    if(tempb[0] == 'n')
+    {
+        isNegative = !isNegative;
+        removeStrElement(tempb, &digitb, 0);
+    }
+
     if(tempb[0] == 'n') strcpy(result, "0");
     while(1)
     {
@@ -486,6 +455,27 @@ const char * power(char result[], char a[], char b[], int digita, int digitb, in
     }
 
     return result;
+}
+
+#pragma endregion String Arithmetic
+
+
+#pragma region Calculations
+
+// Calculate
+// Main Calculation Function
+// Calculate various operations
+const char * Calculate(char nStr[], int len)
+{
+    removeSpaces(nStr, &len);
+    
+    ParenthesisCalculation(nStr, len);
+    
+    PowCalculation(nStr, len, 0);
+    MultDivCalculation(nStr, len);
+    AddSubtractCalculation(nStr, len);
+
+    return nStr;
 }
 
 // Parenthesis Calculation
@@ -629,9 +619,7 @@ const char * MultDivCalculation(char nStr[], int len)
                 intStr2[j] = nStr[i];
             
             for(int k = 0; k <= digit1 + digit2; k++)
-            {
                 removeStrElement(nStr, &len, index1);
-            }
             
             int digitn;
             if(digit1 > digit2) digitn = digit1;
@@ -687,7 +675,6 @@ const char * AddSubtractCalculation(char nStr[], int len)
             
             for(int k = 0; k <= digit1 + digit2; k++)
             {
-                
                 removeStrElement(nStr, &len, index1);
             }
             
@@ -709,45 +696,135 @@ const char * AddSubtractCalculation(char nStr[], int len)
     return nStr; 
 }
 
-// Calculate
-// Main Calculation Function
-// Calculate various operations
-const char * Calculate(char nStr[], int len)
+#pragma endregion Calculations
+
+
+#pragma region Custom Functions
+
+// Check is Number
+// Check if given char is a number
+int isNumber(char value)
 {
-    removeSpaces(nStr, &len);
+    if(value >= '0' && value <= '9') return 1;
+    else return 0;
+}
+
+// Find Digit From String
+// Find digit of integer from string
+int findDigitFromString(char nStr[], int startIndex)
+{
+    int dit;
+    int len = strlen(nStr);
+    for (int i = 0, j = startIndex; i <= len; i++, j++)
+    {
+        if(!(isNumber(nStr[j]) || nStr[j] == 'n'))
+        {
+            dit = i;
+            break;
+        }
+    }
     
-    ParenthesisCalculation(nStr, len);
+    return dit;
+}
+//
+
+// Reverse String
+// Reverse a String
+void revstr(char * nStr, int len)
+{
+    for(int i = 0; i < len/2; i++)
+    {
+        int temp = nStr[i];
+        nStr[i] = nStr[len - i - 1];
+        nStr[len - i - 1] = temp;
+    }
+}
+
+// Remove String Element
+// Remove element in an index of a string
+const char * removeStrElement(char nStr[], int *len, int index)
+{
+    for(int i = index; i < *len; i++)
+        nStr[i] = nStr[i + 1];
     
-    PowCalculation(nStr, len, 0);
-    MultDivCalculation(nStr, len);
-    AddSubtractCalculation(nStr, len);
+    *len -= 1;
+    
+    return nStr;
+}
+
+// Insert String Element
+// Insert element in an index of a string
+const char * insertStrElement(char nStr[], int *len, int index, char value)
+{
+    
+    for(int i = *len; i >= index; i--)
+    {
+        if(i == index) nStr[i] = value;
+        else nStr[i] = nStr[i - 1];
+    }
+    if(*len == index) nStr[index] = value;
+    
+    *len += 1;
+    
 
     return nStr;
 }
 
-// Start Program
-void start()
+// Insert String Element with Integer
+// Insert integer to a string
+const char * insertStrElementWithInt(char nStr[], int *len, int index, int value)
 {
-    printf("Enter Operation: \n");
-    scanf("%[^\n]s", str);
+    char intStr[*len];
+    sprintf(intStr, "%d", value);
     
-    lenght = strlen(str);
+    for (int i = index, j = 0; j < findDigitFromString(intStr, 0); i++, j++)
+    {
+        insertStrElement(nStr, &*len, i, intStr[j]);
+    }
     
-    if(!Validate(str, lenght)) 
-        return;
-
-    Calculate(str, lenght);
-    if(str[0] == 'n') str[0] = '-';
-    
-    printf("Result:\n");
-    printf("%s", str);
+    return nStr;
 }
 
-int main()
-{
-    start();
+// Insert String Element
+// Insert string into another string
+const char * insertStrElementWithStr(char nStr[], int *len, int index, char value[])
+{    
+    for (int i = index, j = 0; j < findDigitFromString(value, 0); i++, j++)
+        insertStrElement(nStr, &*len, i, value[j]);
     
-    return 0;
+    return nStr;
 }
+
+// Remove Spaces
+// Remove Spaces from a string
+const char * removeSpaces(char nStr[], int *len)
+{
+    for(int i = 0; i < *len; i++)
+    {
+        if (nStr[i] == ' ')
+        {
+            removeStrElement(nStr, &*len, i); 
+        }
+    }
+    return nStr;
+}
+
+// Remove Zero In Front of Integer
+// Remove zeros in front of an integer
+const char * removeZeroInfront(char nStr[], int *len)
+{
+    int index = 0;
+    while(1)
+    {
+        if(index + 1 == *len) break;
+        
+        if(nStr[index] == 'n') index++;
+        if(nStr[index] == '0') removeStrElement(nStr, &*len, index);
+        else if(isNumber(nStr[index])) break;
+    }
+    return nStr;
+}
+
+#pragma endregion Custom Functions
 
 //2021 - Sulthan Daffa Arif Mahmudi
