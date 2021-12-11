@@ -67,7 +67,7 @@ void startCalculator()
 
 //Validation
 // This funcion validate symbols and format
-// current valid symbol is: '+', '-'
+// current valid symbol is: '+', '-', '*', '/', '^', '(', ')'
 //
 // format should look like this:
 // <Number><Space><Operator><Space><Number><Space><Operator>...
@@ -341,6 +341,19 @@ const char * subtraction(char result[], char a[], char b[], int digita, int digi
 // Mulltiply string a by string b
 const char * multiplication(char result[], char a[], char b[], int digita, int digitb, int * digitResult)
 {
+    if(digita < digitb)
+    {
+        int tmp;
+        tmp = digita;
+        digita = digitb;
+        digitb = tmp;
+
+        char temp[digita];
+        strcpy(temp, a);
+        strcpy(a, b);
+        strcpy(b, temp);
+    }
+
     char tempa[digita];
     char tempb[digitb];
     
@@ -363,14 +376,11 @@ const char * multiplication(char result[], char a[], char b[], int digita, int d
         removeStrElement(tempb, &digitb, 0);
     }
 
-    while(1)
+    while(tempb[0] != '0')
     {
         subtraction(tempb, tempb, "1", digitb, 1, &digitb);
         
-        if(tempb[0] == 'n') break;
-        
         addition(result, result, tempa, *digitResult, digita, &*digitResult);
-        
     }
 
     if(isNegative) insertStrElement(result, &*digitResult, 0, 'n');
@@ -394,6 +404,8 @@ const char * division(char result[], char a[], char b[], int digita, int digitb,
 
     int isNegative = 0;
 
+    if(digita < digitb) return result;
+
     if(tempa[0] == 'n')
     {
         isNegative = !isNegative;
@@ -405,13 +417,14 @@ const char * division(char result[], char a[], char b[], int digita, int digitb,
         removeStrElement(tempb, &digitb, 0);
     }
 
-    while(1)
+    while(tempa[0] != 'n')
     {
         subtraction(tempa, tempa, tempb, digita, digitb, &digita);
-        if(tempa[0] == 'n') break;
 
         addition(result, result, "1", *digitResult, 1, &*digitResult);
     }
+
+    subtraction(result, result, "1", *digitResult, 1, &*digitResult);
 
     if(isNegative) insertStrElement(result, &*digitResult, 0, 'n');
 
@@ -450,7 +463,6 @@ const char * power(char result[], char a[], char b[], int digita, int digitb, in
     {
         subtraction(tempb, tempb, "1", digitb, 1, &digitb);
         if(tempb[0] == 'n') break;
-        puts(result);
         multiplication(result, result, tempa, *digitResult, digita, &*digitResult); 
     }
 
